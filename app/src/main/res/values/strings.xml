@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyFashion</string>
+    <string name="title_home">Explore</string>
+    <string name="title_dashboard">Outfits</string>
+    <string name="title_gallery">My gallery</string>
+    <string name="title_storage">Storage</string>
+</resources>

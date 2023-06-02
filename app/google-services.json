@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "593641263170",
+    "project_id": "myfashion-48c7e",
+    "storage_bucket": "myfashion-48c7e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593641263170:android:fe5142f4589f745cae5ddb",
+        "android_client_info": {
+          "package_name": "com.example.myfashion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCK8kv32y6hES7HRC_V0FMKsnEGjE0RadQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
