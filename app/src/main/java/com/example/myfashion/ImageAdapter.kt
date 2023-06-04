@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
-class ImageAdapter(private var context: Context, private var imagesList:ArrayList<Image>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+class ImageAdapter(private var context: Context, var imagesList:ArrayList<Image>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var image: ImageView?=null
@@ -32,16 +32,16 @@ class ImageAdapter(private var context: Context, private var imagesList:ArrayLis
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val currentImage = imagesList[position]
         Glide.with(context)
-            .load(currentImage.imagePath)
+            .load(currentImage)
             .apply(RequestOptions().centerCrop())
             .into(holder.image!!)
 
-        holder.image?.setOnClickListener {
-            val intent = Intent(context, ImageFullActivity::class.java)
-            intent.putExtra("path", currentImage.imagePath)
-            intent.putExtra("name", currentImage.imageName)
-            context.startActivity(intent)
-        }
+//        holder.image?.setOnClickListener {
+//            val intent = Intent(context, ImageFullActivity::class.java)
+//            intent.putExtra("path", currentImage.imagePath)
+//            intent.putExtra("name", currentImage.imageName)
+//            context.startActivity(intent)
+//        }                                                                              odkomentować jak już zrobię tę galerię, to wyświetla obrazek po kliknięciu w niego
 
 
     }
