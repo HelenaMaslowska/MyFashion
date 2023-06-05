@@ -27,7 +27,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
 import java.io.File
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class GalleryFragment : Fragment() {
 
@@ -39,7 +42,8 @@ class GalleryFragment : Fragment() {
 
     var storageReference: StorageReference? = null
 
-    private lateinit var allPictures: ArrayList<Image>
+    private var allPictures: ArrayList<Image> = ArrayList()
+    private var images: MutableList<Bitmap> = mutableListOf()
     interface ImagesLoadedCallback {
         fun onImagesLoaded(images: ArrayList<Image>)
     }
@@ -47,7 +51,7 @@ class GalleryFragment : Fragment() {
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
         val galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
 
-        _binding = FragmentGalleryBinding.inflate(inflater, container, false)
+        _binding = FragmentGalleryBinding.inflate(inflater, container, false) // przekształcenia widoków zdefiniowanych w pliku XML układu na obiekty Kotlin
         val root: View = binding.root
 
         //    val textView: TextView = binding.textGallery
@@ -80,6 +84,10 @@ class GalleryFragment : Fragment() {
 //            }
 //        })
 
+        GlobalScope.launch(Dispatchers.IO) {
+            fetchImagesFromFirebaseStorage()
+        }
+
         // Load images to all pictures
         if(allPictures!!.isEmpty())
         {
@@ -95,13 +103,28 @@ class GalleryFragment : Fragment() {
 
     }
 
-    private fun getAllImages(): ArrayList<Image> {  //callback: ImagesLoadedCallback
+    private suspend fun fetchImagesFromFirebaseStorage() {
+        val storageRef = FirebaseStorage.getInstance().getReference()
+        val imagesRef = storageRef.child("tshirts") // path to your images directory
+
+        val listResult = imagesRef.listAll().await()
+
+        listResult.items.forEach { imageRef ->
+            val localFile = File.createTempFile("tempImage", "jpg")
+            imageRef.getFile(localFile).await()
+
+            val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+            images.add(bitmap)
+        }
+    }
+
+    private fun getAllImages(): ArrayList<Image> { //callback: ImagesLoadedCallback
         val images: ArrayList<Image> = ArrayList()
 //        var fileNamesTshirts: ArrayList<String>? = null
 //        var fileNamesTrousers: ArrayList<String>? = null
         val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
         val trousers: StorageReference = FirebaseStorage.getInstance().getReference().child("trousers")
-
+        // sprobowac StorageDatabase, kopiuj link ze storage do realtime i zrob tam foldery
         tshirts.listAll()
             .addOnSuccessListener { listResult ->
                 var index = 0

@@ -22,8 +22,13 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
 import java.lang.Exception
-
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import java.io.File
+import java.io.FileOutputStream
 class MainActivity : AppCompatActivity() {
+
+    private val images: MutableList<Bitmap> = mutableListOf()
 
     private lateinit var binding: ActivityMainBinding
     lateinit var tshirtsFirebase: ArrayList<Image>
@@ -50,13 +55,38 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.navigation_home, R.id.navigation_outfits, R.id.navigation_gallery))
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_home, R.id.navigation_outfits, R.id.navigation_gallery
+            )
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        fetchImagesFromFirebaseStorage()
+    }
 
-        val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
-        val trousers: StorageReference = FirebaseStorage.getInstance().getReference().child("trousers")
+    private fun fetchImagesFromFirebaseStorage() {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imagesRef = storageRef.child("tshirts") // ścieżka do Twojego katalogu ze zdjęciami
+
+        imagesRef.listAll().addOnSuccessListener { listResult ->
+            listResult.items.forEach { imageRef ->
+                val localFile = File.createTempFile("tempImage", "jpg")
+
+                imageRef.getFile(localFile).addOnSuccessListener {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                    images.add(bitmap)
+                }.addOnFailureListener {
+                    // obsługa błędu
+                }
+            }
+        }.addOnFailureListener {
+            // obsługa błędu
+        }
+    }
+
+        //val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
+        //val trousers: StorageReference = FirebaseStorage.getInstance().getReference().child("trousers")
 //        var index = 0
 //        tshirts.listAll()
 //            .addOnSuccessListener { listResult ->
@@ -131,4 +161,3 @@ class MainActivity : AppCompatActivity() {
 //        val images = ArrayList<Image>()
 //
 //    }
-}
