@@ -1,36 +1,28 @@
 package com.example.myfashion.ui.gallery
 
-import android.app.ProgressDialog
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.example.myfashion.Image
 import com.example.myfashion.ImageAdapter
 import com.example.myfashion.databinding.FragmentGalleryBinding
-import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
-import java.io.File
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import com.google.firebase.storage.internal.Sleeper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.io.File
 
 class GalleryFragment : Fragment() {
 
@@ -44,14 +36,14 @@ class GalleryFragment : Fragment() {
 
     private var allPictures: ArrayList<Image> = ArrayList()
     private var images: MutableList<Bitmap> = mutableListOf()
-    interface ImagesLoadedCallback {
-        fun onImagesLoaded(images: ArrayList<Image>)
-    }
+    private var tshirtsList: ArrayList<Image> = ArrayList()
+    private var list: ArrayList<Image> = ArrayList()
+//    interface ImagesLoadedCallback {
+//        fun onImagesLoaded(images: ArrayList<Image>)
+//    }
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
         val galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
-
-
         _binding = FragmentGalleryBinding.inflate(inflater, container, false) // przekształcenia widoków zdefiniowanych w pliku XML układu na obiekty Kotlin
         val root: View = binding.root
 
@@ -60,15 +52,47 @@ class GalleryFragment : Fragment() {
         //      textView.text = it
         //    }
 
+//        val gson = Gson()
+//        Log.d("odbieram jsona i deserializuje go", "$tshirtsList")
+//        val listJson = arguments?.getString("myList")
+        //tshirtsList = gson.fromJson(listJson, object: TypeToken<ArrayList<Image>>() {}.type)
+
+//        val bundle = arguments
+//        val listJson = bundle?.getString("myList")
+//
+//        if (listJson != null) {
+//            Log.d("niby odebral!", "$listJson")
+//            val gson = Gson()
+//            val type = object : TypeToken<ArrayList<Image>>() {}.type
+//            list = gson.fromJson(listJson, type)
+//            // teraz możesz używać listy
+//        }
+//        val bundle = arguments
+//        val message = arguments?.getString("myList")
+//        val bundle = intent.extras
+//        var tempString: String = ""
+//        s = bundle!!.getString("key1", tempString))
+        CoroutineScope(Main).launch {
+            var tempString = arguments?.getString("String");//String text
+            Log.d("odebrane!", "$tempString")
+        }
         return root
     }
-
+    fun newInstance(someInt: Int): GalleryFragment? {
+        val myFragment = GalleryFragment()
+        val args = Bundle()
+        args.putInt("someInt", someInt)
+        myFragment.setArguments(args)
+        return myFragment
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        binding.getImage.setOnClickListener {
-//
-//        }
+        binding.getImage.setOnClickListener {
+
+
+        }
         uploadImage() ///////////////////////////////////////////////////////////////////////////////////////////////
+
 
         binding.imageRecycler?.layoutManager= GridLayoutManager(context, 3)
         binding.imageRecycler?.setHasFixedSize(true)
@@ -90,81 +114,17 @@ class GalleryFragment : Fragment() {
 //        }
 
         // Load images to all pictures
-//        if(allPictures!!.isEmpty())
-//        {
-//            binding.progressBar?.visibility = View.VISIBLE
-//            Log.e("good", allPictures.toString())
-//            allPictures = getAllImages()
-//            Log.e("good", allPictures.toString())
-//            // Set adapter to recycler
-//            binding.imageRecycler.adapter = context?.let { ImageAdapter(it, allPictures!!) }
-//            binding.progressBar?.visibility = View.GONE
-//        }
+        if(allPictures!!.isEmpty())
+        {
+            binding.progressBar?.visibility = View.VISIBLE
+            allPictures = tshirtsList
+            Log.e("good", allPictures.toString())
+            // Set adapter to recycler
+            binding.imageRecycler.adapter = context?.let { ImageAdapter(it, allPictures!!) }
+            binding.progressBar?.visibility = View.GONE
+        }
         // getAllImages()
 
-    }
-
-//    private suspend fun fetchImagesFromFirebaseStorage() {
-//        val storageRef = FirebaseStorage.getInstance().getReference()
-//        val imagesRef = storageRef.child("tshirts") // path to your images directory
-//
-//        val listResult = imagesRef.listAll().await()
-//
-//        listResult.items.forEach { imageRef ->
-//            val localFile = File.createTempFile("tempImage", "jpg")
-//            imageRef.getFile(localFile).await()
-//
-//            val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-//            images.add(bitmap)
-//        }
-//    }
-
-    private fun getAllImages(): ArrayList<Image> { //callback: ImagesLoadedCallback
-        val images1: ArrayList<Image> = ArrayList()
-//        var fileNamesTshirts: ArrayList<String>? = null
-//        var fileNamesTrousers: ArrayList<String>? = null
-        val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
-        val trousers: StorageReference = FirebaseStorage.getInstance().getReference().child("trousers")
-        // sprobowac StorageDatabase, kopiuj link ze storage do realtime i zrob tam foldery
-//        tshirts.listAll()
-//            .addOnSuccessListener { listResult ->
-//                var index = 0
-//                for (item in listResult.items) {
-//                    item.downloadUrl.addOnCompleteListener { task ->
-//                        if (task.isSuccessful) {
-//                            images.add(Image(task.result, "tshirt$index"))
-//                            //callback.onImagesLoaded(images)
-//
-//                        }
-//                    }
-//                }
-//            }
-
-        tshirts.listAll()
-            .addOnSuccessListener { listResult ->
-                Log.d("im here", "$images1")
-                var index = 0
-                for (item in listResult.items) {
-                    item.downloadUrl.addOnSuccessListener {uri ->
-                       images1.add(Image(uri, "tshirt$index"))
-                        Log.e("images", "$images1")
-                    }
-                }
-            }
-            .addOnFailureListener {
-                binding.getThisImage.setText("Failed to fetch t-shirts")
-            }
-//        trousers.listAll().addOnSuccessListener { listResult ->
-//            for (item in listResult.items) {
-//                val imagePath = item.downloadUrl.toString()
-//                val imageName = item.name
-//                val image = Image(imagePath, imageName)
-//                images.add(image)
-//            }
-//            adapter.notifyDataSetChanged()
-//        }.addOnFailureListener { binding.getThisImage.setText("Failed to fetch trousers") }
-        Log.d("urichecking images", "$images1")
-        return images1
     }
 
     private fun uploadImage() {
@@ -205,3 +165,67 @@ class GalleryFragment : Fragment() {
         _binding = null
     }
 }
+
+
+//    private suspend fun fetchImagesFromFirebaseStorage() {
+//        val storageRef = FirebaseStorage.getInstance().getReference()
+//        val imagesRef = storageRef.child("tshirts") // path to your images directory
+//
+//        val listResult = imagesRef.listAll().await()
+//
+//        listResult.items.forEach { imageRef ->
+//            val localFile = File.createTempFile("tempImage", "jpg")
+//            imageRef.getFile(localFile).await()
+//
+//            val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+//            images.add(bitmap)
+//        }
+//    }
+
+//private fun getAllImages(): ArrayList<Image> { //callback: ImagesLoadedCallback
+//    val images1: ArrayList<Image> = ArrayList()
+////        var fileNamesTshirts: ArrayList<String>? = null
+////        var fileNamesTrousers: ArrayList<String>? = null
+//    val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
+//    val trousers: StorageReference = FirebaseStorage.getInstance().getReference().child("trousers")
+//    // sprobowac StorageDatabase, kopiuj link ze storage do realtime i zrob tam foldery
+////        tshirts.listAll()
+////            .addOnSuccessListener { listResult ->
+////                var index = 0
+////                for (item in listResult.items) {
+////                    item.downloadUrl.addOnCompleteListener { task ->
+////                        if (task.isSuccessful) {
+////                            images.add(Image(task.result, "tshirt$index"))
+////                            //callback.onImagesLoaded(images)
+////
+////                        }
+////                    }
+////                }
+////            }
+//
+//    tshirts.listAll()
+//        .addOnSuccessListener { listResult ->
+//            Log.d("im here", "$images1")
+//            var index = 0
+//            for (item in listResult.items) {
+//                item.downloadUrl.addOnSuccessListener {uri ->
+//                    images1.add(Image(uri, "tshirt$index"))
+//                    Log.e("images", "$images1")
+//                }
+//            }
+//        }
+//        .addOnFailureListener {
+//            binding.getThisImage.setText("Failed to fetch t-shirts")
+//        }
+////        trousers.listAll().addOnSuccessListener { listResult ->
+////            for (item in listResult.items) {
+////                val imagePath = item.downloadUrl.toString()
+////                val imageName = item.name
+////                val image = Image(imagePath, imageName)
+////                images.add(image)
+////            }
+////            adapter.notifyDataSetChanged()
+////        }.addOnFailureListener { binding.getThisImage.setText("Failed to fetch trousers") }
+//    Log.d("urichecking images", "$images1")
+//    return images1
+//}

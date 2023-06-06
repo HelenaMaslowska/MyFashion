@@ -1,6 +1,7 @@
 package com.example.myfashion
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -25,6 +26,8 @@ import java.lang.Exception
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
+import com.example.myfashion.ui.gallery.GalleryFragment
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -77,11 +80,29 @@ class MainActivity : AppCompatActivity() {
         //fetchImagesFromFirebaseStorage()
         progress = findViewById(R.id.progressBar)
         progress.visibility = View.GONE
-        CoroutineScope(IO).launch {
 
+
+        CoroutineScope(IO).launch {
             addImages()
 
+//            bundle.putString("myList", tshirtsList.toString())
+//            //bundle.putString("myList", listJson)
+//            val intent = Intent(this@MainActivity, GalleryFragment::class.java)
+//            intent.putExtras(bundle)
+            val fragment = GalleryFragment()
+            val bundle = Bundle()
+            Log.d ("a co ja wysylam?", tshirtsList.toString())
+            bundle.putString("String", tshirtsList.toString())
+            fragment.arguments = bundle
+            supportFragmentManager.beginTransaction()  // 'fragment_container' to ID Twojego kontenera na fragmenty
+                .commit()
+
+            //fragment.arguments = bundle
+            //fragment.arguments = bundle
+            //Log.d("argumenty", "${fragment.arguments}")
+            //supportFragmentManager.beginTransaction().commit()
         }
+
     }
 
     private suspend fun addImages() {
@@ -95,6 +116,7 @@ class MainActivity : AppCompatActivity() {
             for (item in listResult.items) {
                 item.downloadUrl.addOnCompleteListener { uri ->
                     if (uri.isSuccessful) {
+
                         tshirtsL = (tshirtsL + Image(uri.result, "tshirt$index")) as ArrayList<Image>
                         //Log.d("urichecking", "$tshirtsL")
                     }
@@ -109,8 +131,6 @@ class MainActivity : AppCompatActivity() {
         delay(2000)    // delay czeka na asynchroniczny wątek ten listAll
         setProgress1(0)
         setTshirtsListToMainThread(tshirtsL)
-        Log.d("ja tutaj!", "$tshirtsList")
-
     }
 
     private suspend fun setProgress1(loading: Int)
