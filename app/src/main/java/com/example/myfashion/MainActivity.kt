@@ -24,14 +24,27 @@ import com.google.firebase.storage.StorageReference
 import java.lang.Exception
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+
+
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 class MainActivity : AppCompatActivity() {
 
     private val images: MutableList<Bitmap> = mutableListOf()
-
+    private lateinit var tshirtsList: ArrayList<Image>
     private lateinit var binding: ActivityMainBinding
-    lateinit var tshirtsFirebase: ArrayList<Image>
+    private lateinit var progress: ProgressBar
+
+    private var loading = 0
     //private var imageRecycler: RecyclerView?=null
     //private var progressBar: ProgressBar?=null
     //private var allPictures: ArrayList<Image>?=null
@@ -43,9 +56,7 @@ class MainActivity : AppCompatActivity() {
         // ***************** FIREBASE SETUP
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
-        firebaseAppCheck.installAppCheckProviderFactory(
-            PlayIntegrityAppCheckProviderFactory.getInstance()
-        )
+        firebaseAppCheck.installAppCheckProviderFactory( PlayIntegrityAppCheckProviderFactory.getInstance() )
         // ***************** *****************  ***************** *****************
         // ***************** NAV SETUP
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -62,7 +73,61 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        fetchImagesFromFirebaseStorage()
+        // ***************** *****************  ***************** *****************
+        //fetchImagesFromFirebaseStorage()
+        progress = findViewById(R.id.progressBar)
+        progress.visibility = View.GONE
+        CoroutineScope(IO).launch {
+
+            addImages()
+
+        }
+    }
+
+    private suspend fun addImages() {
+        val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
+        var tshirtsL: ArrayList<Image> = ArrayList()
+        setProgress1(1)
+
+        tshirts.listAll()
+        .addOnSuccessListener {listResult ->
+            var index = 0
+            for (item in listResult.items) {
+                item.downloadUrl.addOnCompleteListener { uri ->
+                    if (uri.isSuccessful) {
+                        tshirtsL = (tshirtsL + Image(uri.result, "tshirt$index")) as ArrayList<Image>
+                        //Log.d("urichecking", "$tshirtsL")
+                    }
+                    index += 1
+                    Log.d("zakonczone", "$tshirtsL")
+                }
+            }
+        }
+        .addOnFailureListener {
+            Log.e("oh noo error", images.toString())
+        }.await()
+        delay(2000)    // delay czeka na asynchroniczny wątek ten listAll
+        setProgress1(0)
+        setTshirtsListToMainThread(tshirtsL)
+        Log.d("ja tutaj!", "$tshirtsList")
+
+    }
+
+    private suspend fun setProgress1(loading: Int)
+    {
+        withContext(Main) {
+            setProgressVisible(loading)
+        }
+    }
+    private fun setProgressVisible(loading: Int) {
+        if (loading == 1) progress.visibility = View.VISIBLE
+        else progress.visibility = View.GONE
+    }
+    private suspend fun setTshirtsListToMainThread(tshirtsL: ArrayList<Image>) {
+        withContext(Main) {
+            tshirtsList = tshirtsL
+            Log.d("tshirts", "$tshirtsList")
+        }
     }
 
     private fun fetchImagesFromFirebaseStorage() {
@@ -77,11 +142,11 @@ class MainActivity : AppCompatActivity() {
                     val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
                     images.add(bitmap)
                 }.addOnFailureListener {
-                    // obsługa błędu
+                    Log.e("oh noo error", images.toString())
                 }
             }
         }.addOnFailureListener {
-            // obsługa błędu
+            Log.e("oh noo error", images.toString())
         }
     }
 
