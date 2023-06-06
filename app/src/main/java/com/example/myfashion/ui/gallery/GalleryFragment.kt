@@ -30,12 +30,8 @@ class GalleryFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentGalleryBinding? = null
 
-    private lateinit var adapter: ImageAdapter
-
-    var storageReference: StorageReference? = null
-
     private var allPictures: ArrayList<Image> = ArrayList()
-    private var images: MutableList<Bitmap> = mutableListOf()
+    //private var images: MutableList<Bitmap> = mutableListOf()
     private var tshirtsList: ArrayList<Image> = ArrayList()
     private var list: ArrayList<Image> = ArrayList()
 //    interface ImagesLoadedCallback {
@@ -44,7 +40,7 @@ class GalleryFragment : Fragment() {
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
         val galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
-        _binding = FragmentGalleryBinding.inflate(inflater, container, false) // przekształcenia widoków zdefiniowanych w pliku XML układu na obiekty Kotlin
+        _binding = FragmentGalleryBinding.inflate(inflater, container, false) // przekształcenia widoków zdefiniowanych w pliku XML układu na obiekty Kotlin, od tego momentu mamy dostęp do xml
         val root: View = binding.root
 
         //    val textView: TextView = binding.textGallery

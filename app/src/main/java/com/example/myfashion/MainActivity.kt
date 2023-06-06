@@ -41,26 +41,19 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 class MainActivity : AppCompatActivity() {
-
     private val images: MutableList<Bitmap> = mutableListOf()
     private lateinit var tshirtsList: ArrayList<Image>
     private lateinit var binding: ActivityMainBinding
     private lateinit var progress: ProgressBar
-
     private var loading = 0
-    //private var imageRecycler: RecyclerView?=null
-    //private var progressBar: ProgressBar?=null
-    //private var allPictures: ArrayList<Image>?=null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // ***************** ***************** ***************** *****************
+        // ***************** ***************** ***************** ***************** ***************** ***************** ***************** *****************
         // ***************** FIREBASE SETUP
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory( PlayIntegrityAppCheckProviderFactory.getInstance() )
-        // ***************** *****************  ***************** *****************
+        // ***************** *****************  ***************** ***************** ***************** ***************** ***************** *****************
         // ***************** NAV SETUP
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -76,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        // ***************** *****************  ***************** *****************
+        // ***************** *****************  ***************** ***************** ***************** ***************** ***************** *****************
         //fetchImagesFromFirebaseStorage()
         progress = findViewById(R.id.progressBar)
         progress.visibility = View.GONE
