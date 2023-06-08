@@ -42,14 +42,11 @@ private var _binding: FragmentHomeBinding? = null
             if (currTshirts != null) {
                 updateCurrentImage("tshirts", ((currTshirts + 1) % 3).toString())
             }
-
         }
         binding.secondNext.setOnClickListener {
             val currTrousers = viewModel.getCurrentTrousers().toString().toIntOrNull()
             if (currTrousers != null) {
-                    Log.d("haha nie działa tro", viewModel.getCurrentTrousers().toString())
-                    Log.d("zmieniam na tro", ((currTrousers + 1) % 3).toString())
-                    updateCurrentImage("trousers", ((currTrousers + 1) % 3).toString())
+                updateCurrentImage("trousers", ((currTrousers + 1) % 3).toString())
             }
         }
         binding.firstBack.setOnClickListener {
@@ -58,8 +55,7 @@ private var _binding: FragmentHomeBinding? = null
                 if (currTshirts - 1 >= 0) {
                     updateCurrentImage("tshirts", ((currTshirts - 1) % 3).toString())
                 }
-                else
-                {
+                else {
                     updateCurrentImage("tshirts", "2")
                 }
             }
@@ -68,23 +64,23 @@ private var _binding: FragmentHomeBinding? = null
             val currTrousers = viewModel.getCurrentTrousers().toString().toIntOrNull()
             if (currTrousers != null) {
                 if (currTrousers - 1 >= 0) {
-                    Log.d("haha nie działa trou", viewModel.getCurrentTrousers().toString())
-                    Log.d("zmieniam na tro", ((currTrousers - 1) % 3).toString())
                     updateCurrentImage("trousers", ((currTrousers - 1) % 3).toString())
                 }
-                else
-                {
+                else {
                     updateCurrentImage("trousers", "2")
                 }
             }
         }
 
         binding.saveOutfit.setOnClickListener {
-            Log.d("tshirts", viewModel.getCurrentTshirt().toString())
-            Log.d("trousers", viewModel.getCurrentTrousers().toString())
-            Log.d("tr/image0", viewModel.getTrousers("image0").toString())
-            Log.d("tr/image1", viewModel.getTrousers("image1").toString())
-            Log.d("tr/image2", viewModel.getTrousers("image2").toString())
+            val img1 = viewModel.getCurrentTshirt()
+            val img2 = viewModel.getCurrentTrousers()
+            val outfits = viewModel.getOutfitsList().value
+            outfits?.add(Pair(img1, img2))
+            Log.d("dziala", outfits.toString())
+            if (outfits != null) {
+                viewModel.setOutfitsList(outfits)
+            }
         }
     }
 
