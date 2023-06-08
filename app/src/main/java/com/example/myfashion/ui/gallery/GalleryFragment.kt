@@ -7,11 +7,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myfashion.Image
 import com.example.myfashion.ImageAdapter
+import com.example.myfashion.MainViewModel
 import com.example.myfashion.databinding.FragmentGalleryBinding
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -27,6 +30,8 @@ import java.io.File
 class GalleryFragment : Fragment() {
 
     // This property is only valid between onCreateView and onDestroyView.
+    private val mainVM by viewModels<MainViewModel>()
+
     private val binding get() = _binding!!
     private var _binding: FragmentGalleryBinding? = null
 
@@ -68,11 +73,27 @@ class GalleryFragment : Fragment() {
 //        val bundle = intent.extras
 //        var tempString: String = ""
 //        s = bundle!!.getString("key1", tempString))
-        CoroutineScope(Main).launch {
-            var tempString = arguments?.getString("String");//String text
-            Log.d("odebrane!", "$tempString")
-        }
+//        binding.getImage.setOnClickListener() {
+//            var tempString: ArrayList<Image> = mainVM.tshirtList.observe()
+//            Log.d("odebrane!", "$tempString")
+//
+//            if(allPictures!!.isEmpty())
+//            {
+//                binding.progressBar?.visibility = View.VISIBLE
+//                allPictures = tempString
+//                Log.e("good", allPictures.toString())
+//                // Set adapter to recycler
+//                binding.imageRecycler.adapter = context?.let { ImageAdapter(it, allPictures!!) }
+//                binding.progressBar?.visibility = View.GONE
+//            }
+//        }
+
         return root
+    }
+
+    override fun onStart() {
+        super.onStart()
+
     }
     fun newInstance(someInt: Int): GalleryFragment? {
         val myFragment = GalleryFragment()
@@ -89,38 +110,9 @@ class GalleryFragment : Fragment() {
         }
         uploadImage() ///////////////////////////////////////////////////////////////////////////////////////////////
 
-
         binding.imageRecycler?.layoutManager= GridLayoutManager(context, 3)
         binding.imageRecycler?.setHasFixedSize(true)
         allPictures = ArrayList()
-
-        // Load images to all pictures
-//        binding.progressBar?.visibility = View.VISIBLE
-//        getAllImages(object: ImagesLoadedCallback {
-//            override fun onImagesLoaded(images: ArrayList<Image>) {
-//                // Set adapter to recycler
-//                Log.e("to ja", images.toString())
-//                binding.imageRecycler.adapter = context?.let { ImageAdapter(it, images) }
-//                binding.progressBar?.visibility = View.GONE
-//            }
-//        })
-
-//        GlobalScope.launch(Dispatchers.IO) {
-//            fetchImagesFromFirebaseStorage()
-//        }
-
-        // Load images to all pictures
-        if(allPictures!!.isEmpty())
-        {
-            binding.progressBar?.visibility = View.VISIBLE
-            allPictures = tshirtsList
-            Log.e("good", allPictures.toString())
-            // Set adapter to recycler
-            binding.imageRecycler.adapter = context?.let { ImageAdapter(it, allPictures!!) }
-            binding.progressBar?.visibility = View.GONE
-        }
-        // getAllImages()
-
     }
 
     private fun uploadImage() {
@@ -139,6 +131,13 @@ class GalleryFragment : Fragment() {
                 binding.getThisImage.setText("ez")
             }.addOnFailureListener { binding.getThisImage.setText("fail") }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        super.onViewCreated(view, savedInstanceState)
 //        val storage = FirebaseStorage.getInstance()
@@ -156,12 +155,25 @@ class GalleryFragment : Fragment() {
 //                // Handle any errors that occurred during the download
 //            }
 //    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-}
 
+// Load images to all pictures
+//        binding.progressBar?.visibility = View.VISIBLE
+//        getAllImages(object: ImagesLoadedCallback {
+//            override fun onImagesLoaded(images: ArrayList<Image>) {
+//                // Set adapter to recycler
+//                Log.e("to ja", images.toString())
+//                binding.imageRecycler.adapter = context?.let { ImageAdapter(it, images) }
+//                binding.progressBar?.visibility = View.GONE
+//            }
+//        })
+
+//        GlobalScope.launch(Dispatchers.IO) {
+//            fetchImagesFromFirebaseStorage()
+//        }
+
+// Load images to all pictures
+
+// getAllImages()
 
 //    private suspend fun fetchImagesFromFirebaseStorage() {
 //        val storageRef = FirebaseStorage.getInstance().getReference()

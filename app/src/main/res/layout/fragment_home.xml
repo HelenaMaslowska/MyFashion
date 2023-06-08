@@ -71,7 +71,7 @@
         <ImageView
             android:id="@+id/secondImage"
             android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_height="170dp"
             android:layout_margin="0dp"
             tools:src="@tools:sample/avatars" />
 
@@ -106,7 +106,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/saveOutfit"
             android:layout_width="154dp"
             android:layout_height="wrap_content"
             android:text="Save outfit" />

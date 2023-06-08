@@ -26,6 +26,8 @@ import java.lang.Exception
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.myfashion.ui.gallery.GalleryFragment
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -41,127 +43,156 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 class MainActivity : AppCompatActivity() {
+    private val mainVM by viewModels<MainViewModel>()
     private val images: MutableList<Bitmap> = mutableListOf()
     private lateinit var tshirtsList: ArrayList<Image>
     private lateinit var binding: ActivityMainBinding
     private lateinit var progress: ProgressBar
     private var loading = 0
+    private lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // ***************** ***************** ***************** ***************** ***************** ***************** ***************** *****************
-        // ***************** FIREBASE SETUP
+
+        // ***************** FIREBASE SETUP ***************** ***************** ***************** ***************** ***************** ***************** *****************
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
-        firebaseAppCheck.installAppCheckProviderFactory( PlayIntegrityAppCheckProviderFactory.getInstance() )
-        // ***************** *****************  ***************** ***************** ***************** ***************** ***************** *****************
-        // ***************** NAV SETUP
+        firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
+        // *****************  NAV SETUP *****************  ***************** ***************** ***************** ***************** ***************** *****************
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         val navView: BottomNavigationView = binding.navView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_outfits, R.id.navigation_gallery
-            )
+        val appBarConfiguration = AppBarConfiguration(                      // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
+            setOf( R.id.navigation_home, R.id.navigation_outfits, R.id.navigation_gallery )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         // ***************** *****************  ***************** ***************** ***************** ***************** ***************** *****************
-        //fetchImagesFromFirebaseStorage()
+
         progress = findViewById(R.id.progressBar)
+        progress.visibility = View.VISIBLE
+        for(i in 0..2) {
+            uploadSelectedImage("tshirts", "image$i")
+            uploadSelectedImage("trousers", "image$i")
+        }
         progress.visibility = View.GONE
 
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel.getTrousers("image1").observe(this) { img ->
 
-        CoroutineScope(IO).launch {
-            addImages()
-
-//            bundle.putString("myList", tshirtsList.toString())
-//            //bundle.putString("myList", listJson)
-//            val intent = Intent(this@MainActivity, GalleryFragment::class.java)
-//            intent.putExtras(bundle)
-            val fragment = GalleryFragment()
-            val bundle = Bundle()
-            Log.d ("a co ja wysylam?", tshirtsList.toString())
-            bundle.putString("String", tshirtsList.toString())
-            fragment.arguments = bundle
-            supportFragmentManager.beginTransaction()  // 'fragment_container' to ID Twojego kontenera na fragmenty
-                .commit()
-
-            //fragment.arguments = bundle
-            //fragment.arguments = bundle
-            //Log.d("argumenty", "${fragment.arguments}")
-            //supportFragmentManager.beginTransaction().commit()
         }
 
     }
 
+    private fun uploadSelectedImage(category: String, clothName: String) {
+        val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child("$category/$clothName.jpg")
+        val localFile = File.createTempFile("tempImage", "jpg")
+
+        storageRef.getFile(localFile).
+        addOnSuccessListener {
+            // The image has been successfully downloaded
+            // Add image to a list
+            val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+            if (category == "tshirts")
+                viewModel.setTshirts(clothName, bitmap)
+            if (category == "trousers")
+                viewModel.setTrousers(clothName, bitmap)
+            Log.d("success $category $clothName", bitmap.toString())
+        }.addOnFailureListener { Log.e("err load bitmap viewModel", storageRef.toString()) }
+    }
+
     private suspend fun addImages() {
-        val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
+        val tshirts: StorageReference =
+            FirebaseStorage.getInstance().getReference().child("tshirts")
         var tshirtsL: ArrayList<Image> = ArrayList()
         setProgress1(1)
 
         tshirts.listAll()
-        .addOnSuccessListener {listResult ->
-            var index = 0
-            for (item in listResult.items) {
-                item.downloadUrl.addOnCompleteListener { uri ->
-                    if (uri.isSuccessful) {
+            .addOnSuccessListener { listResult ->
+                var index = 0
+                for (item in listResult.items) {
+                    item.downloadUrl.addOnCompleteListener { uri ->
+                        if (uri.isSuccessful) {
 
-                        tshirtsL = (tshirtsL + Image(uri.result, "tshirt$index")) as ArrayList<Image>
-                        //Log.d("urichecking", "$tshirtsL")
+                            tshirtsL =
+                                (tshirtsL + Image(uri.result, "tshirt$index")) as ArrayList<Image>
+                            //Log.d("urichecking", "$tshirtsL")
+                        }
+                        index += 1
+                        Log.d("zakonczone", "$tshirtsL")
                     }
-                    index += 1
-                    Log.d("zakonczone", "$tshirtsL")
                 }
             }
-        }
-        .addOnFailureListener {
-            Log.e("oh noo error", images.toString())
-        }.await()
+            .addOnFailureListener {
+                Log.e("oh noo error", images.toString())
+            }.await()
         delay(2000)    // delay czeka na asynchroniczny wątek ten listAll
         setProgress1(0)
         setTshirtsListToMainThread(tshirtsL)
     }
 
-    private suspend fun setProgress1(loading: Int)
-    {
+    private suspend fun setProgress1(loading: Int) {
         withContext(Main) {
             setProgressVisible(loading)
         }
     }
+
     private fun setProgressVisible(loading: Int) {
         if (loading == 1) progress.visibility = View.VISIBLE
         else progress.visibility = View.GONE
     }
+
     private suspend fun setTshirtsListToMainThread(tshirtsL: ArrayList<Image>) {
         withContext(Main) {
             tshirtsList = tshirtsL
             Log.d("tshirts", "$tshirtsList")
         }
     }
+}
 
-    private fun fetchImagesFromFirebaseStorage() {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imagesRef = storageRef.child("tshirts") // ścieżka do Twojego katalogu ze zdjęciami
 
-        imagesRef.listAll().addOnSuccessListener { listResult ->
-            listResult.items.forEach { imageRef ->
-                val localFile = File.createTempFile("tempImage", "jpg")
+//CoroutineScope(IO).launch {
+//addImages()
+//Log.d("zaczynamy od dodania tego", "$tshirtsList")
+//mainVM.tshirtList = tshirtsList
+//Log.d("dodane", "${mainVM.tshirtList}")
+//            bundle.putString("myList", tshirtsList.toString())
+//            //bundle.putString("myList", listJson)
+//            val intent = Intent(this@MainActivity, GalleryFragment::class.java)
+//            intent.putExtras(bundle)
+//            val fragment = GalleryFragment()
+//            val bundle = Bundle()
+//            Log.d ("a co ja wysylam?", tshirtsList.toString())
+//            bundle.putString("String", tshirtsList.toString())
+//            fragment.arguments = bundle
+//            supportFragmentManager.beginTransaction()  // 'fragment_container' to ID Twojego kontenera na fragmenty
+//                .commit()
+//fragment.arguments = bundle
+//fragment.arguments = bundle
+//Log.d("argumenty", "${fragment.arguments}")
+//supportFragmentManager.beginTransaction().commit()
+//}
 
-                imageRef.getFile(localFile).addOnSuccessListener {
-                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                    images.add(bitmap)
-                }.addOnFailureListener {
-                    Log.e("oh noo error", images.toString())
-                }
-            }
-        }.addOnFailureListener {
-            Log.e("oh noo error", images.toString())
-        }
-    }
+
+//    private fun fetchImagesFromFirebaseStorage() {
+//        val storageRef = FirebaseStorage.getInstance().reference
+//        val imagesRef = storageRef.child("tshirts") // ścieżka do Twojego katalogu ze zdjęciami
+//
+//        imagesRef.listAll().addOnSuccessListener { listResult ->
+//            listResult.items.forEach { imageRef ->
+//                val localFile = File.createTempFile("tempImage", "jpg")
+//
+//                imageRef.getFile(localFile).addOnSuccessListener {
+//                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+//                    images.add(bitmap)
+//                }.addOnFailureListener {
+//                    Log.e("oh noo error", images.toString())
+//                }
+//            }
+//        }.addOnFailureListener {
+//            Log.e("oh noo error", images.toString())
+//        }
+//    }
 
         //val tshirts: StorageReference = FirebaseStorage.getInstance().getReference().child("tshirts")
         //val trousers: StorageReference = FirebaseStorage.getInstance().getReference().child("trousers")
@@ -207,7 +238,7 @@ class MainActivity : AppCompatActivity() {
 //            imageRecycler?.adapter = ImageAdapter(this, allPictures!!)
 //            progressBar?.visibility = View.GONE
 //        }
-    }
+
 
 //    private fun getAllImages() : ArrayList<Image> {
 //        val images = ArrayList<Image>()
