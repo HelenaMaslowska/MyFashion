@@ -79,9 +79,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getTrousers("image1").observe(this) { img ->
-
         }
-
     }
 
     private fun uploadSelectedImage(category: String, clothName: String) {
@@ -97,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 viewModel.setTshirts(clothName, bitmap)
             if (category == "trousers")
                 viewModel.setTrousers(clothName, bitmap)
-            Log.d("success $category $clothName", bitmap.toString())
         }.addOnFailureListener { Log.e("err load bitmap viewModel", storageRef.toString()) }
     }
 
@@ -113,13 +110,10 @@ class MainActivity : AppCompatActivity() {
                 for (item in listResult.items) {
                     item.downloadUrl.addOnCompleteListener { uri ->
                         if (uri.isSuccessful) {
-
                             tshirtsL =
                                 (tshirtsL + Image(uri.result, "tshirt$index")) as ArrayList<Image>
-                            //Log.d("urichecking", "$tshirtsL")
                         }
                         index += 1
-                        Log.d("zakonczone", "$tshirtsL")
                     }
                 }
             }
