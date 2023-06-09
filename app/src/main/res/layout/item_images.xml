@@ -22,8 +22,8 @@
 
     <ImageView
         android:id="@+id/tshirtImg"
-        android:layout_width="220dp"
-        android:layout_height="220dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         app:layout_constraintBottom_toTopOf="@+id/trousersImg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,8 +32,8 @@
 
     <ImageView
         android:id="@+id/trousersImg"
-        android:layout_width="220dp"
-        android:layout_height="240dp"
+        android:layout_width="160dp"
+        android:layout_height="270dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tshirtImg"

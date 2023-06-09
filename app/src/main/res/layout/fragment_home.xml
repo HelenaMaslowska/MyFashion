@@ -21,7 +21,7 @@
         <ImageView
             android:id="@+id/head"
             android:layout_width="364dp"
-            android:layout_height="49dp"
+            android:layout_height="60dp"
             android:layout_weight="1"
             android:src="@drawable/eyes" />
     </LinearLayout>
@@ -30,62 +30,54 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="0dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/firstBack"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_margin="6dp"
             android:text="Back" />
 
         <ImageView
             android:id="@+id/firstImage"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_margin="0dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             tools:src="@tools:sample/avatars" />
 
         <Button
             android:id="@+id/firstNext"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_margin="6dp"
             android:text="Next" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/secondBack"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_margin="6dp"
-            android:layout_marginEnd="18dp"
             android:text="Back" />
 
         <ImageView
             android:id="@+id/secondImage"
-            android:layout_width="150dp"
-            android:layout_height="170dp"
-            android:layout_margin="0dp"
+            android:layout_width="140dp"
+            android:layout_height="240dp"
             tools:src="@tools:sample/avatars" />
 
         <Button
             android:id="@+id/secondNext"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_margin="6dp"
-            android:layout_marginBottom="112dp"
             android:text="Next" />
     </LinearLayout>
 
@@ -97,7 +89,7 @@
         <ImageView
             android:id="@+id/shoes"
             android:layout_width="364dp"
-            android:layout_height="64dp"
+            android:layout_height="55dp"
             android:layout_weight="1"
             android:src="@drawable/boots" />
     </LinearLayout>
