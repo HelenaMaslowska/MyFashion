@@ -1,7 +1,10 @@
 package com.example.myfashion
 
-import android.net.Uri
-import com.google.android.gms.tasks.Task
+import android.graphics.Bitmap
 
-data class Image(var imagePath:Uri, var imageName:String) {
-}
+data class Image
+    (
+        var title: String,
+        var src1: Bitmap,
+        var src2: Bitmap
+    )

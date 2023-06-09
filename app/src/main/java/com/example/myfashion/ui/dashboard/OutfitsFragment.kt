@@ -1,19 +1,16 @@
 package com.example.myfashion.ui.outfits
 
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myfashion.Image
+import com.example.myfashion.ImageAdapter
 import com.example.myfashion.MainViewModel
 import com.example.myfashion.databinding.FragmentDashboardBinding
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import java.io.File
 
 class OutfitsFragment : Fragment() {
 
@@ -24,22 +21,28 @@ private var _binding: FragmentDashboardBinding? = null
     private lateinit var viewModel: MainViewModel
 
 override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
-    val outfitsViewModel = ViewModelProvider(this).get(OutfitsViewModel::class.java)
+    //val outfitsViewModel = ViewModelProvider(this).get(OutfitsViewModel::class.java)
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
     val root: View = binding.root
-
-    val textView: TextView = binding.textDashboard
-    outfitsViewModel.text.observe(viewLifecycleOwner) {
-        textView.text = it
-    }
-
-    viewModel.outfits.observe(viewLifecycleOwner) {
-        for(outfit in it) {
-            val img1 = viewModel.getTshirts("image${outfit.first}").value
-            val img2 = viewModel.getTshirts("image${outfit.second}").value
-
+    viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+//    val textView: TextView = binding.textDashboard
+//    outfitsViewModel.text.observe(viewLifecycleOwner) {
+//        textView.text = it
+//    }
+    var images = ArrayList<Image>()
+    if (viewModel.outfits.value != null && viewModel.outfitsTitles.value != null) {
+        for(outfit in viewModel.outfits.value!!.zip(viewModel.outfitsTitles.value!!)) {
+            val img1 = viewModel.getTshirts("image${outfit.first.first}").value
+            val img2 = viewModel.getTrousers("image${outfit.first.second}").value
+            if (img1 != null && img2 != null) {
+                images.add(Image(outfit.second, img1, img2))
+            }
         }
     }
+    val recyclerView = binding.outfitsRecycleView
+    recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+    recyclerView.setHasFixedSize(true)
+    recyclerView.adapter = ImageAdapter(requireActivity(), images)
     return root
 }
 

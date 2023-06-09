@@ -76,10 +76,13 @@ private var _binding: FragmentHomeBinding? = null
             val img1 = viewModel.getCurrentTshirt()
             val img2 = viewModel.getCurrentTrousers()
             val outfits = viewModel.getOutfitsList().value
+            val outfitsTitles = viewModel.getOutfitsTitles().value
             outfits?.add(Pair(img1, img2))
+            outfitsTitles?.add(binding.setTitleOfOutfit.text.toString())
             Log.d("dziala", outfits.toString())
-            if (outfits != null) {
+            if (outfits != null && outfitsTitles != null) {
                 viewModel.setOutfitsList(outfits)
+                viewModel.setOutfitsTitles(outfitsTitles)
             }
         }
     }

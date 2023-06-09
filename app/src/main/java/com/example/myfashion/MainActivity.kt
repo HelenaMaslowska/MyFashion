@@ -45,7 +45,7 @@ import java.io.FileOutputStream
 class MainActivity : AppCompatActivity() {
     private val mainVM by viewModels<MainViewModel>()
     private val images: MutableList<Bitmap> = mutableListOf()
-    private lateinit var tshirtsList: ArrayList<Image>
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var progress: ProgressBar
     private var loading = 0
@@ -53,11 +53,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ***************** FIREBASE SETUP ***************** ***************** ***************** ***************** ***************** ***************** *****************
+        // ***************** FIREBASE SETUP *****************
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
-        // *****************  NAV SETUP *****************  ***************** ***************** ***************** ***************** ***************** *****************
+        // *****************  NAV SETUP *****************
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val navView: BottomNavigationView = binding.navView
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        // ***************** *****************  ***************** ***************** ***************** ***************** ***************** *****************
+        // ***************** *****************  ***************** *****************
 
         progress = findViewById(R.id.progressBar)
         progress.visibility = View.VISIBLE
@@ -98,52 +98,36 @@ class MainActivity : AppCompatActivity() {
         }.addOnFailureListener { Log.e("err load bitmap viewModel", storageRef.toString()) }
     }
 
-    private suspend fun addImages() {
-        val tshirts: StorageReference =
-            FirebaseStorage.getInstance().getReference().child("tshirts")
-        var tshirtsL: ArrayList<Image> = ArrayList()
-        setProgress1(1)
 
-        tshirts.listAll()
-            .addOnSuccessListener { listResult ->
-                var index = 0
-                for (item in listResult.items) {
-                    item.downloadUrl.addOnCompleteListener { uri ->
-                        if (uri.isSuccessful) {
-                            tshirtsL =
-                                (tshirtsL + Image(uri.result, "tshirt$index")) as ArrayList<Image>
-                        }
-                        index += 1
-                    }
-                }
-            }
-            .addOnFailureListener {
-                Log.e("oh noo error", images.toString())
-            }.await()
-        delay(2000)    // delay czeka na asynchroniczny wątek ten listAll
-        setProgress1(0)
-        setTshirtsListToMainThread(tshirtsL)
-    }
 
-    private suspend fun setProgress1(loading: Int) {
-        withContext(Main) {
-            setProgressVisible(loading)
-        }
-    }
-
-    private fun setProgressVisible(loading: Int) {
-        if (loading == 1) progress.visibility = View.VISIBLE
-        else progress.visibility = View.GONE
-    }
-
-    private suspend fun setTshirtsListToMainThread(tshirtsL: ArrayList<Image>) {
-        withContext(Main) {
-            tshirtsList = tshirtsL
-            Log.d("tshirts", "$tshirtsList")
-        }
-    }
 }
 
+//    private suspend fun addImages() {
+//        val tshirts: StorageReference =
+//            FirebaseStorage.getInstance().getReference().child("tshirts")
+//        var tshirtsL: ArrayList<Image> = ArrayList()
+//        setProgress1(1)
+//
+//        tshirts.listAll()
+//            .addOnSuccessListener { listResult ->
+//                var index = 0
+//                for (item in listResult.items) {
+//                    item.downloadUrl.addOnCompleteListener { uri ->
+//                        if (uri.isSuccessful) {
+//                            tshirtsL =
+//                                (tshirtsL + Image(uri.result, "tshirt$index")) as ArrayList<Image>
+//                        }
+//                        index += 1
+//                    }
+//                }
+//            }
+//            .addOnFailureListener {
+//                Log.e("oh noo error", images.toString())
+//            }.await()
+//        delay(2000)    // delay czeka na asynchroniczny wątek ten listAll
+//        setProgress1(0)
+//        setTshirtsListToMainThread(tshirtsL)
+//    }
 
 //CoroutineScope(IO).launch {
 //addImages()

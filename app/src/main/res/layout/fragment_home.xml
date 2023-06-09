@@ -7,6 +7,11 @@
     tools:context=".ui.home.HomeFragment"
     android:orientation="vertical">
 
+    <EditText
+        android:id="@+id/set_title_of_outfit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Name your outfit!"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -96,6 +101,10 @@
             android:layout_weight="1"
             android:src="@drawable/boots" />
     </LinearLayout>
+
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
