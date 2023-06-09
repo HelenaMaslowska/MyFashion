@@ -28,35 +28,35 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class GalleryFragment : Fragment() {
-
-    // This property is only valid between onCreateView and onDestroyView.
     private val mainVM by viewModels<MainViewModel>()
-
     private val binding get() = _binding!!
     private var _binding: FragmentGalleryBinding? = null
-
-    private var allPictures: ArrayList<Image> = ArrayList()
-    //private var images: MutableList<Bitmap> = mutableListOf()
-    private var tshirtsList: ArrayList<Image> = ArrayList()
-    private var list: ArrayList<Image> = ArrayList()
-//    interface ImagesLoadedCallback {
-//        fun onImagesLoaded(images: ArrayList<Image>)
-//    }
+    private var allImages: ArrayList<Image> = ArrayList()
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
-        val galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
+
         _binding = FragmentGalleryBinding.inflate(inflater, container, false) // przekształcenia widoków zdefiniowanych w pliku XML układu na obiekty Kotlin, od tego momentu mamy dostęp do xml
         val root: View = binding.root
 
-        //    val textView: TextView = binding.textGallery
-        //    galleryViewModel.text.observe(viewLifecycleOwner) {
-        //      textView.text = it
-        //    }
+        return root
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+
+//val galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
+//    val textView: TextView = binding.textGallery
+//    galleryViewModel.text.observe(viewLifecycleOwner) { textView.text = it }
+
+
+// wersje dodawania obrazka /////////////////////////////////////////////////////////////////////
 //        val gson = Gson()
 //        Log.d("odbieram jsona i deserializuje go", "$tshirtsList")
 //        val listJson = arguments?.getString("myList")
-        //tshirtsList = gson.fromJson(listJson, object: TypeToken<ArrayList<Image>>() {}.type)
+//tshirtsList = gson.fromJson(listJson, object: TypeToken<ArrayList<Image>>() {}.type)
 
 //        val bundle = arguments
 //        val listJson = bundle?.getString("myList")
@@ -88,55 +88,44 @@ class GalleryFragment : Fragment() {
 //            }
 //        }
 
-        return root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-    }
-    fun newInstance(someInt: Int): GalleryFragment? {
-        val myFragment = GalleryFragment()
-        val args = Bundle()
-        args.putInt("someInt", someInt)
-        myFragment.setArguments(args)
-        return myFragment
-    }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.getImage.setOnClickListener {
 
 
-        }
-        uploadImage() ///////////////////////////////////////////////////////////////////////////////////////////////
+// pierwsze działające dodawanie obrazka z firebase storage ////////////////////////////////////////
+//fun newInstance(someInt: Int): GalleryFragment? {
+//    val myFragment = GalleryFragment()
+//    val args = Bundle()
+//    args.putInt("someInt", someInt)
+//    myFragment.setArguments(args)
+//    return myFragment
+//}
+//override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//    super.onViewCreated(view, savedInstanceState)
+//    binding.getImage.setOnClickListener {
+//    }
+//    uploadImage() ///////////////////////////////////////////////////////////////////////////////////////////////
+//
+//    binding.imageRecycler?.layoutManager= GridLayoutManager(context, 3)
+//    binding.imageRecycler?.setHasFixedSize(true)
+//    allPictures = ArrayList()
+//}
+//
+//private fun uploadImage() {
+//    val imageName = binding.getThisImage.text.toString()
+//    val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child("trousers/image2.jpg")
+//
+//    val localFile = File.createTempFile("tempImage", "jpg")
+//    binding.getThisImage.setText("tempfile")
+//    storageRef.getFile(localFile).
+//    addOnSuccessListener {
+//
+//        // The image has been successfully downloaded
+//        // Display the image using the ImageView
+//        val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+//        binding.showImageHere.setImageBitmap(bitmap)
+//        binding.getThisImage.setText("ez")
+//    }.addOnFailureListener { binding.getThisImage.setText("fail") }
+//}
 
-        binding.imageRecycler?.layoutManager= GridLayoutManager(context, 3)
-        binding.imageRecycler?.setHasFixedSize(true)
-        allPictures = ArrayList()
-    }
-
-    private fun uploadImage() {
-        val imageName = binding.getThisImage.text.toString()
-        val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child("trousers/image2.jpg")
-
-        val localFile = File.createTempFile("tempImage", "jpg")
-        binding.getThisImage.setText("tempfile")
-        storageRef.getFile(localFile).
-            addOnSuccessListener {
-
-                // The image has been successfully downloaded
-                // Display the image using the ImageView
-                val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                binding.showImageHere.setImageBitmap(bitmap)
-                binding.getThisImage.setText("ez")
-            }.addOnFailureListener { binding.getThisImage.setText("fail") }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-}
 
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        super.onViewCreated(view, savedInstanceState)
