@@ -40,6 +40,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
+        android:id="@+id/delete_button"
         android:layout_width="92dp"
         android:layout_height="44dp"
         android:layout_marginTop="15dp"

@@ -1,14 +1,18 @@
 package com.example.myfashion.ui.home
 
 import android.graphics.BitmapFactory
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.myfashion.MainViewModel
 import com.example.myfashion.R
 import com.example.myfashion.databinding.FragmentHomeBinding
@@ -20,13 +24,16 @@ class HomeFragment : Fragment() {
 private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
+
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
         val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //    val textView: TextView = binding.textHome
         //    homeViewModel.text.observe(viewLifecycleOwner) { textView.text = it }
+
         uploadBasicImages() // async
+
         return root
     }
 
@@ -34,6 +41,8 @@ private var _binding: FragmentHomeBinding? = null
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        binding.ProgressBar1.visibility = View.GONE
+        showGif()
 //        viewModel.getTshirts("image1").observe(viewLifecycleOwner) { img ->
 //
 //        }
@@ -73,6 +82,8 @@ private var _binding: FragmentHomeBinding? = null
         }
 
         binding.saveOutfit.setOnClickListener {
+            val progress = binding.ProgressBar1
+            progress.visibility = View.VISIBLE
             val img1 = viewModel.getCurrentTshirt()
             val img2 = viewModel.getCurrentTrousers()
             val outfits = viewModel.getOutfitsList().value
@@ -84,10 +95,12 @@ private var _binding: FragmentHomeBinding? = null
                 viewModel.setOutfitsList(outfits)
                 viewModel.setOutfitsTitles(outfitsTitles)
             }
+            progress.visibility = View.GONE
         }
     }
 
     private fun uploadBasicImages () {
+        binding.ProgressBar1.visibility = View.VISIBLE
         val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child("tshirts/image0.jpg")
         val localFile = File.createTempFile("tempImage", "jpg")
 
@@ -107,6 +120,7 @@ private var _binding: FragmentHomeBinding? = null
             binding.secondImage.setImageBitmap(bitmap)
             viewModel.setCurrentTrousers("image0")
         }.addOnFailureListener { binding.secondImage.setImageResource(R.drawable.ic_home_black_24dp) }
+        binding.ProgressBar1.visibility = View.GONE
     }
 
     private fun updateCurrentImage(cloth:String, num: String) {
@@ -123,7 +137,13 @@ private var _binding: FragmentHomeBinding? = null
             viewModel.setCurrentTrousers("image$num")
         }
     }
+    fun showGif() {
+        val image1: ImageView = binding.imageGif
+        val image2: ImageView = binding.imageGif2
+        Glide.with(this).load(R.drawable.arrow).into(image1)
+        Glide.with(this).load(R.drawable.arrow2).into(image2)
 
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

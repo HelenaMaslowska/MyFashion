@@ -32,10 +32,10 @@ override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, save
     var images = ArrayList<Image>()
     if (viewModel.outfits.value != null && viewModel.outfitsTitles.value != null) {
         for(outfit in viewModel.outfits.value!!.zip(viewModel.outfitsTitles.value!!)) {
-            val img1 = viewModel.getTshirts("image${outfit.first.first}").value
-            val img2 = viewModel.getTrousers("image${outfit.first.second}").value
+            val img1 = viewModel.getTshirts("image${outfit.first.first}").value     // first image from outfit
+            val img2 = viewModel.getTrousers("image${outfit.first.second}").value   // second image from outfit
             if (img1 != null && img2 != null) {
-                images.add(Image(outfit.second, img1, img2))
+                images.add(Image(outfit.second, img1, img2))        // outfit.second gives a desired title
             }
         }
     }
@@ -46,9 +46,9 @@ override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, save
     return root
 }
 
-override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
+override fun onDestroyView()
+{
+    super.onDestroyView()
+    _binding = null
+}
 }
