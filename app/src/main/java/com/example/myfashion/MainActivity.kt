@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity() {
     private val images: MutableList<Bitmap> = mutableListOf()
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var progress: ProgressBar
-    private var loading = 0
     private lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,13 +67,10 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         // ***************** *****************  ***************** *****************
 
-        progress = findViewById(R.id.progressBar)
-        progress.visibility = View.VISIBLE
         for(i in 0..2) {
             uploadSelectedImage("tshirts", "image$i")
             uploadSelectedImage("trousers", "image$i")
         }
-        progress.visibility = View.GONE
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getTrousers("image1").observe(this) { img ->
@@ -97,9 +92,6 @@ class MainActivity : AppCompatActivity() {
                 viewModel.setTrousers(clothName, bitmap)
         }.addOnFailureListener { Log.e("err load bitmap viewModel", storageRef.toString()) }
     }
-
-
-
 }
 
 //    private suspend fun addImages() {

@@ -11,11 +11,10 @@ class ImageFullActivity : AppCompatActivity() {
         setContentView(R.layout.activity_image_full)
 
         val imagePath = intent.getStringExtra("path")
-        val imageName = intent.getStringExtra("name")
 
-        supportActionBar?.setTitle(imageName)
+        supportActionBar?.setTitle("Image")
         Glide.with(this)
             .load(imagePath)
-            .into(findViewById(R.id.imageView))
+            .into(findViewById(R.id.imageView)) //tu nie bedzie działać bo on ma loadować z Bitmapy a nie ze ścieżki string
     }
 }

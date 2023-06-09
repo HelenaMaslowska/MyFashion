@@ -16,9 +16,26 @@ class MainViewModel: ViewModel() {
     private var image5 = MutableLiveData<Bitmap>()
     private var image6 = MutableLiveData<Bitmap>()
 
+//    val imagesTshirts: ArrayList<Bitmap> = getAllTshirts()
+//    val imagesTrousers: ArrayList<Bitmap> = getAllTrousers()
+
     val outfits: MutableLiveData<ArrayList<Pair<Char, Char>>> = MutableLiveData<ArrayList<Pair<Char, Char>>>(ArrayList())
     val outfitsTitles: MutableLiveData<ArrayList<String>> = MutableLiveData<ArrayList<String>>(ArrayList())
 //Images
+    fun getAllTshirts(): ArrayList<Bitmap> {
+        var imgs: ArrayList<Bitmap> = ArrayList()
+        imgs.add(image1.value!!)
+        imgs.add(image2.value!!)
+        imgs.add(image3.value!!)
+        return imgs
+    }
+    fun getAllTrousers(): ArrayList<Bitmap> {
+        var imgs: ArrayList<Bitmap> = ArrayList()
+        imgs.add(image4.value!!)
+        imgs.add(image5.value!!)
+        imgs.add(image6.value!!)
+        return imgs
+    }
     fun setTshirts(text: String, image: Bitmap) {
         if (text == "image0") image1.value = image
         if (text == "image1") image2.value = image
