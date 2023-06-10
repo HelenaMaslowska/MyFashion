@@ -3,9 +3,9 @@ MyFashion is a mobile app which contains outfits created on your own!
 
 ### APK
 [Here](https://github.com/HelenaMaslowska/MyFashion/blob/main/app-debug.apk) you can download apk version and install it on your Android phone. 
-Min Android version: 10
-Min Android size: 6'
-
+System specifications:
+- Min Android version: 10
+- Min Android size: 6'
 
 ## Explore 
 Select your favorite clothes and check how they match.
