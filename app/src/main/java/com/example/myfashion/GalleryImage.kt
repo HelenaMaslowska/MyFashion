@@ -8,4 +8,5 @@ class GalleryImage {
     constructor(img: Bitmap?) {
         this.img = img
     }
+    constructor(){}
 }

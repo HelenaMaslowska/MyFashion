@@ -59,7 +59,7 @@ class GalleryFragment : Fragment() {
             // Get all images from storage
             allImages = getAllImages()
             // Set adapter to recycler
-            imageRecycler?.adapter = ImageGalleryAdapter(requireActivity(), allImages!!)
+            imageRecycler?.adapter = ImageGalleryAdapter(requireContext(), allImages!!)
             progressBar?.visibility = View.GONE
         }
 
@@ -76,7 +76,6 @@ class GalleryFragment : Fragment() {
         {
             images.add(GalleryImage(img))
         }
-
         return images
     }
 
@@ -239,29 +238,3 @@ class GalleryFragment : Fragment() {
 ////                }
 ////            }
 //
-//    tshirts.listAll()
-//        .addOnSuccessListener { listResult ->
-//            Log.d("im here", "$images1")
-//            var index = 0
-//            for (item in listResult.items) {
-//                item.downloadUrl.addOnSuccessListener {uri ->
-//                    images1.add(Image(uri, "tshirt$index"))
-//                    Log.e("images", "$images1")
-//                }
-//            }
-//        }
-//        .addOnFailureListener {
-//            binding.getThisImage.setText("Failed to fetch t-shirts")
-//        }
-////        trousers.listAll().addOnSuccessListener { listResult ->
-////            for (item in listResult.items) {
-////                val imagePath = item.downloadUrl.toString()
-////                val imageName = item.name
-////                val image = Image(imagePath, imageName)
-////                images.add(image)
-////            }
-////            adapter.notifyDataSetChanged()
-////        }.addOnFailureListener { binding.getThisImage.setText("Failed to fetch trousers") }
-//    Log.d("urichecking images", "$images1")
-//    return images1
-//}

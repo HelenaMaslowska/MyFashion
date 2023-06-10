@@ -22,8 +22,8 @@
 
     <ImageView
         android:id="@+id/tshirtImg"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         app:layout_constraintBottom_toTopOf="@+id/trousersImg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,21 +32,11 @@
 
     <ImageView
         android:id="@+id/trousersImg"
-        android:layout_width="160dp"
-        android:layout_height="270dp"
+        android:layout_width="180dp"
+        android:layout_height="320dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tshirtImg"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <Button
-        android:id="@+id/delete_button"
-        android:layout_width="92dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="30dp"
-        android:text="Delete"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trousersImg" />
 </androidx.constraintlayout.widget.ConstraintLayout>

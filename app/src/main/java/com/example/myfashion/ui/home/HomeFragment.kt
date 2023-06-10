@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -90,11 +91,11 @@ private var _binding: FragmentHomeBinding? = null
             val outfitsTitles = viewModel.getOutfitsTitles().value
             outfits?.add(Pair(img1, img2))
             outfitsTitles?.add(binding.setTitleOfOutfit.text.toString())
-            Log.d("dziala", outfits.toString())
             if (outfits != null && outfitsTitles != null) {
                 viewModel.setOutfitsList(outfits)
                 viewModel.setOutfitsTitles(outfitsTitles)
             }
+            Toast.makeText(requireContext(), "Outfit ${binding.setTitleOfOutfit.text} saved!", Toast.LENGTH_SHORT).show()
             progress.visibility = View.GONE
         }
     }
