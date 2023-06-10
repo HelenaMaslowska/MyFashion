@@ -14,7 +14,6 @@ class ImageFullActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_full)
         val imagePath = intent.getStringExtra("imagePath")
-        val bitmap = BitmapFactory.decodeFile(imagePath)
         if (imagePath != null) {
             val bitmap1 = BitmapFactory.decodeFile(imagePath)
             //supportActionBar?.setTitle("Image") //set your own title here
