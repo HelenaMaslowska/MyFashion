@@ -27,12 +27,8 @@ private var _binding: FragmentHomeBinding? = null
     private lateinit var viewModel: MainViewModel
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        //    val textView: TextView = binding.textHome
-        //    homeViewModel.text.observe(viewLifecycleOwner) { textView.text = it }
-
         uploadBasicImages() // async
 
         return root
@@ -40,13 +36,11 @@ private var _binding: FragmentHomeBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
         binding.ProgressBar1.visibility = View.GONE
         showGif()
-//        viewModel.getTshirts("image1").observe(viewLifecycleOwner) { img ->
-//
-//        }
+
         binding.firstNext.setOnClickListener {
             val currTshirts = viewModel.getCurrentTshirt().toString().toIntOrNull() //0
             if (currTshirts != null) {

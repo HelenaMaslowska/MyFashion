@@ -13,24 +13,17 @@ class ImageFullActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_full)
-
-        //val imagePath = intent.getParcelableExtra("BitmapImage")
         val imagePath = intent.getStringExtra("imagePath")
         val bitmap = BitmapFactory.decodeFile(imagePath)
         if (imagePath != null) {
-            Log.d("ezz", imagePath.toString())
             val bitmap1 = BitmapFactory.decodeFile(imagePath)
-            //supportActionBar?.setTitle("Image")
+            //supportActionBar?.setTitle("Image") //set your own title here
             Glide.with(this)
                 .asBitmap()
-                .load(bitmap1)  // ładuj obraz z pliku
-                .into(findViewById(R.id.imageView)) //tu nie bedzie działać bo on ma loadować z Bitmapy a nie ze ścieżki string
+                .load(bitmap1)
+                .into(findViewById(R.id.imageView))
         } else {
-            Log.d("ez", imagePath.toString())
+            Log.d("error load big img", imagePath.toString())
         }
-
-
-
-
     }
 }

@@ -26,9 +26,7 @@ override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, save
     val root: View = binding.root
     viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 //    val textView: TextView = binding.textDashboard
-//    outfitsViewModel.text.observe(viewLifecycleOwner) {
-//        textView.text = it
-//    }
+//    outfitsViewModel.text.observe(viewLifecycleOwner) { textView.text = it }
     var images = ArrayList<Image>()
     if (viewModel.outfits.value != null && viewModel.outfitsTitles.value != null) {
         for(outfit in viewModel.outfits.value!!.zip(viewModel.outfitsTitles.value!!)) {
@@ -46,8 +44,7 @@ override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, save
     return root
 }
 
-override fun onDestroyView()
-{
+override fun onDestroyView() {
     super.onDestroyView()
     _binding = null
 }

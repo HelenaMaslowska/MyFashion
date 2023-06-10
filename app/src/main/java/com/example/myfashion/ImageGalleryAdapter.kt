@@ -17,10 +17,8 @@ import java.io.File
 import java.io.FileOutputStream
 
 class ImageGalleryAdapter(private val context: Context, private val imagesList: ArrayList<GalleryImage>) : RecyclerView.Adapter<ImageGalleryAdapter.ImageViewHolder>() {
-
     class ImageViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         var image: ImageView?=null
-
         init {
             image = itemView.findViewById(R.id.row_image)
         }
@@ -44,7 +42,6 @@ class ImageGalleryAdapter(private val context: Context, private val imagesList: 
             val imagePath = saveBitmapToFile(context, currImage.img!!)
             val intent = Intent(context, ImageFullActivity::class.java)
             intent.putExtra("imagePath", imagePath)
-            Log.d("yikes", imagePath.toString())
             context.startActivity(intent)
         }
     }
@@ -61,5 +58,4 @@ class ImageGalleryAdapter(private val context: Context, private val imagesList: 
     override fun getItemCount(): Int {
         return imagesList.size
     }
-
 }
